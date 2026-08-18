@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ulangan Harian Teks Argumentasi</title>
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --secondary: #f1f5f9;
+      --bg: #e2e8f0;
+      --text: #1e293b;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 800px;
+      min-height: 500px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      margin: 2rem 1rem;
+      position: relative;
+    }
+
+    /* Header App */
+    .app-header {
+      background: linear-gradient(135deg, #4f46e5, #3b82f6);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .app-header h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .app-header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* Screen Management */
+    .screen {
+      display: none;
+      padding: 2rem;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* Start Screen & Form */
+    #start-screen {
+      align-items: center;
+      text-align: center;
+    }
+    
+    .form-container {
+      width: 100%;
+      max-width: 400px;
+      margin: 1.5rem auto 2rem auto;
+      text-align: left;
+      background: #f8fafc;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn {
+      padding: 0.85rem 1.5rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      width: auto;
+    }
+
+    .btn-outline:hover {
+      background-color: var(--secondary);
+    }
+
+    /* Quiz Screen */
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--secondary);
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      font-weight: bold;
+      color: #64748b;
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .quote-box {
+      background-color: #f8fafc;
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .option-btn {
+      text-align: left;
+      padding: 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .option-btn:hover {
+      border-color: var(--primary);
+      background: #f8fafc;
+    }
+
+    .option-btn.selected {
+      border-color: var(--primary);
+      background: #eff6ff;
+      font-weight: 600;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    #btnNext {
+      width: auto;
+    }
+
+    /* Essay Screen */
+    #essay-screen textarea {
+      min-height: 220px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .essay-hint {
+      background-color: #f8fafc;
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .char-counter {
+      text-align: right;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 0.35rem;
+    }
+
+    /* Result Screen */
+    #result-screen {
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .student-badge {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      text-align: left;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .student-badge p {
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .student-badge p:last-child {
+      margin-bottom: 0;
+    }
+
+    .score-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: #eff6ff;
+      border: 8px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin: 0 auto 1.5rem auto;
+    }
+
+    .result-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-top: auto;
+      width: 100%;
+    }
+
+    footer span {
+      font-weight: 600;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div class="app-header">
+      <h1>Ulangan Harian Teks Argumentasi</h1>
+      <p>Mata Pelajaran Bahasa Indonesia — Kelas 11 SMA</p>
+    </div>
+
+    <!-- TAMPILAN AWAL (FORM IDENTITAS) -->
+    <div id="start-screen" class="screen active">
+      <h2 style="margin-bottom: 0.5rem;">Selamat Datang!</h2>
+      <p style="color: #64748b; line-height: 1.5; font-size: 0.95rem;">Silakan lengkapi identitas Anda terlebih dahulu sebelum memulai ulangan.</p>
+      
+      <div class="form-container">
+        <div class="form-group">
+          <label for="inputNama">Nama Lengkap</label>
+          <input type="text" id="inputNama" placeholder="Ketik nama lengkap Anda..." required>
+        </div>
+        <div class="form-group">
+          <label for="inputAbsen">Nomor Absen</label>
+          <input type="number" id="inputAbsen" placeholder="Contoh: 12" required>
+        </div>
+        <div class="form-group">
+          <label for="inputKelas">Kelas</label>
+          <input type="text" id="inputKelas" placeholder="Contoh: XI MIPA 1" required>
+        </div>
+      </div>
+
+      <button class="btn" onclick="startQuiz()">Mulai Kuis Sekarang</button>
+    </div>
+
+    <!-- TAMPILAN KUIS PILIHAN GANDA -->
+    <div id="quiz-screen" class="screen">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="question-header">
+        <span id="questionCount">Soal 1 dari 15</span>
+      </div>
+      
+      <div id="questionContainer" class="question-text">
+        <!-- Soal akan di-render di sini -->
+      </div>
+
+      <div id="optionsContainer" class="options-grid">
+        <!-- Pilihan jawaban akan di-render di sini -->
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-outline" id="btnPrev" onclick="prevQuestion()">Sebelumnya</button>
+        <button class="btn" id="btnNext" onclick="nextQuestion()">Selanjutnya</button>
+      </div>
+    </div>
+
+    <!-- TAMPILAN SOAL URAIAN (ESAI) -->
+    <div id="essay-screen" class="screen">
+      <h2 style="margin-bottom: 0.5rem;">Soal Uraian</h2>
+      <p style="color: #64748b; margin-bottom: 1.25rem; font-size: 0.9rem;">Kerjakan soal berikut sebelum mengirim jawaban.</p>
+
+      <div class="essay-hint">
+        <b>Soal:</b> Buatlah sebuah <b>teks argumentasi singkat</b> (minimal 3 paragraf) dengan tema
+        <b>"Produk Pangan Lokal Indonesia"</b>. Pastikan teksmu memuat struktur lengkap:
+        <br><br>
+        1. <b>Pendahuluan (Tesis)</b> — sampaikan pendapat/topik produk pangan lokal yang kamu pilih.<br>
+        2. <b>Argumentasi</b> — berikan alasan logis yang didukung fakta atau data.<br>
+        3. <b>Penegasan Ulang (Kesimpulan)</b> — tegaskan kembali pendapatmu menggunakan kata seperti "oleh karena itu", "maka", atau "jadi".
+      </div>
+
+      <div class="form-group" style="flex:1; display:flex; flex-direction:column;">
+        <label for="inputEsai">Jawaban Uraian</label>
+        <textarea id="inputEsai" placeholder="Tulis teks argumentasimu di sini..." oninput="updateCharCounter()"></textarea>
+        <div class="char-counter" id="charCounter">0 karakter</div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-outline" onclick="backToLastQuestion()">Sebelumnya</button>
+        <button class="btn" id="btnSubmitEssay" onclick="submitQuiz()">Kirim Jawaban</button>
+      </div>
+    </div>
+
+    <!-- TAMPILAN HASIL -->
+    <div id="result-screen" class="screen">
+      <h2 style="margin-bottom: 1.5rem;">Evaluasi Selesai!</h2>
+      
+      <!-- Box Identitas Siswa di Halaman Hasil -->
+      <div class="student-badge">
+        <p><strong>Nama:</strong> <span id="resNama">-</span></p>
+        <p><strong>No. Absen:</strong> <span id="resAbsen">-</span></p>
+        <p><strong>Kelas:</strong> <span id="resKelas">-</span></p>
+      </div>
+
+      <div class="score-circle" id="finalScore">0</div>
+      <p style="font-size:0.85rem; color:#64748b; margin-bottom:0.5rem;">*Nilai di atas hanya dari soal pilihan ganda. Soal uraian akan dinilai oleh guru.</p>
+      <p id="feedbackText" style="margin-bottom: 1rem; font-size: 1.1rem;"></p>
+      <p id="sendStatus" style="margin-bottom: 1.5rem; font-size: 0.85rem; color: #64748b;"></p>
+
+      <div class="result-buttons">
+        <button class="btn" onclick="location.reload()">Kembali ke Awal</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Dibuat oleh <span>Alifia Ahwal Zakiyyah, S.Pd</span>
+  </footer>
+
+  <script>
+    // ==========================================================
+    // KONFIGURASI GOOGLE SHEETS
+    // Ganti URL di bawah ini dengan URL Web App hasil deploy
+    // Google Apps Script kamu (lihat panduan yang diberikan).
+    // ==========================================================
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXB26zWcBMmmevIc-EQrtFbnYZ6ST7rPKoc8EbLtC85ToBjEVtZ86yxD94E5DgDwyzMA/exec";
+
+    // Data 15 Soal (versi lebih mudah, berdasarkan materi PPT Teks Argumentasi)
+    const questions = [
+      {
+        q: "Teks argumentasi adalah teks yang berisi pendapat seseorang yang didukung oleh...",
+        options: { A: "Khayalan penulis", B: "Alasan, data, atau fakta", C: "Dialog antartokoh", D: "Urutan langkah kerja" },
+        ans: "B",
+        pembahasan: "Teks argumentasi berisi pendapat/gagasan yang didukung oleh alasan, data, atau fakta agar pembaca yakin dan setuju dengan pendapat tersebut."
+      },
+      {
+        q: "Apa tujuan utama dari teks argumentasi?",
+        options: { A: "Menghibur pembaca dengan cerita", B: "Meyakinkan pembaca agar setuju dengan pendapat penulis", C: "Menjelaskan urutan suatu proses", D: "Menggambarkan suatu tempat secara rinci" },
+        ans: "B",
+        pembahasan: "Tujuan utama teks argumentasi adalah meyakinkan pembaca agar menerima dan setuju dengan pendapat yang disampaikan penulis."
+      },
+      {
+        q: "Berikut ini yang merupakan salah satu ciri teks argumentasi adalah...",
+        options: { A: "Menggunakan alur cerita dengan tokoh", B: "Berisi langkah-langkah membuat sesuatu", C: "Didukung oleh alasan, data, dan fakta", D: "Hanya berisi khayalan penulis" },
+        ans: "C",
+        pembahasan: "Salah satu ciri utama teks argumentasi adalah pendapatnya didukung oleh alasan, data, dan fakta yang jelas."
+      },
+      {
+        q: "Bagian awal teks argumentasi yang berisi pernyataan pendapat atau topik yang akan dibahas disebut...",
+        options: { A: "Argumentasi", B: "Pendahuluan (Tesis)", C: "Penegasan Ulang", D: "Koda" },
+        ans: "B",
+        pembahasan: "Pendahuluan (tesis) berisi pernyataan pendapat, gagasan utama, atau topik yang akan dibahas, sekaligus memperkenalkan sudut pandang penulis."
+      },
+      {
+        q: "Bagian teks argumentasi yang berisi alasan-alasan logis, data, fakta, atau hasil penelitian untuk mendukung pendapat disebut...",
+        options: { A: "Argumentasi", B: "Orientasi", C: "Reorientasi", D: "Pendahuluan" },
+        ans: "A",
+        pembahasan: "Bagian argumentasi berisi alasan-alasan logis yang mendukung pendapat, diperkuat dengan data, fakta, contoh, kutipan, atau hasil penelitian."
+      },
+      {
+        q: "Kata-kata seperti \"oleh karena itu\", \"maka\", dan \"jadi\" biasanya digunakan pada bagian...",
+        options: { A: "Pendahuluan (Tesis)", B: "Argumentasi", C: "Penegasan Ulang (Kesimpulan)", D: "Judul" },
+        ans: "C",
+        pembahasan: "Penegasan ulang (kesimpulan) berisi penguatan kembali pendapat penulis dan biasanya menggunakan kata penutup seperti \"oleh karena itu\", \"maka\", atau \"jadi\"."
+      },
+      {
+        q: "Pernyataan yang bersifat objektif dan dapat dibuktikan dengan data, angka, waktu, atau tempat disebut...",
+        options: { A: "Opini", B: "Fakta", C: "Ajakan", D: "Imbauan" },
+        ans: "B",
+        pembahasan: "Fakta adalah pernyataan yang bersifat objektif, tidak dipengaruhi perasaan pribadi, dan bisa dibuktikan dengan data, angka, waktu, atau tempat."
+      },
+      {
+        q: "Pendapat, perkiraan, atau keyakinan pribadi yang belum tentu benar dan bersifat subjektif disebut...",
+        options: { A: "Fakta", B: "Data", C: "Opini", D: "Bukti" },
+        ans: "C",
+        pembahasan: "Opini adalah pendapat, perkiraan, atau keyakinan pribadi yang bersifat subjektif dan belum tentu benar."
+      },
+      {
+        q: "Kalimat \"Menurut saya, Lumpia Semarang lebih nikmat jika dimakan saat masih hangat\" merupakan contoh...",
+        options: { A: "Fakta", B: "Opini", C: "Data statistik", D: "Struktur teks" },
+        ans: "B",
+        pembahasan: "Kalimat tersebut menggunakan kata \"menurut saya\" yang menandakan pendapat pribadi, sehingga termasuk opini, bukan fakta."
+      },
+      {
+        q: "Kalimat \"Lumpia Semarang umumnya berisi rebung, telur, ayam, atau udang\" merupakan contoh...",
+        options: { A: "Opini", B: "Fakta", C: "Ajakan", D: "Kesimpulan" },
+        ans: "B",
+        pembahasan: "Kalimat tersebut menyampaikan informasi objektif tentang isi lumpia yang dapat dibuktikan kebenarannya, sehingga termasuk fakta."
+      },
+      {
+        q: "Tipe teks argumentasi yang bertujuan meyakinkan pembaca agar menerima pendapat penulis disebut tipe...",
+        options: { A: "Eksplanatif", B: "Informatif", C: "Persuasif", D: "Naratif" },
+        ans: "C",
+        pembahasan: "Tipe persuasif bertujuan meyakinkan pembaca agar menerima pendapat penulis berdasarkan alasan yang logis."
+      },
+      {
+        q: "Tipe teks argumentasi yang menjelaskan hubungan sebab-akibat agar pembaca memahami alasan pendukung pendapat disebut tipe...",
+        options: { A: "Persuasif", B: "Eksplanatif", C: "Informatif", D: "Deskriptif" },
+        ans: "B",
+        pembahasan: "Tipe eksplanatif menjelaskan hubungan sebab-akibat agar pembaca memahami alasan yang mendukung pendapat penulis."
+      },
+      {
+        q: "Langkah pertama dalam menulis teks argumentasi adalah...",
+        options: { A: "Mencari fakta dan data", B: "Menyusun kerangka paragraf", C: "Menentukan topik", D: "Mengembangkan kerangka menjadi paragraf" },
+        ans: "C",
+        pembahasan: "Langkah pertama menulis teks argumentasi adalah menentukan topik, baru dilanjutkan menentukan tujuan, menyusun kerangka, mencari data, lalu mengembangkannya menjadi paragraf."
+      },
+      {
+        q: "Poster termasuk salah satu jenis teks persuasi karena berisi pernyataan untuk...",
+        options: { A: "Menceritakan kisah pribadi penulis", B: "Mendorong atau mengajak seseorang mengikuti keinginan penulis", C: "Menjelaskan struktur organisasi", D: "Menyajikan data statistik semata" },
+        ans: "B",
+        pembahasan: "Teks persuasi, termasuk poster, berisi pernyataan yang bertujuan mendorong atau mengajak seseorang mengikuti keinginan/ajakan penulis."
+      },
+      {
+        q: "Manakah yang termasuk ciri-ciri poster?",
+        options: { A: "Kalimat panjang dan sangat rinci", B: "Warna kalem tanpa gambar", C: "Menggunakan kalimat singkat, jelas, dan gambar menarik", D: "Hanya berisi tulisan tanpa ilustrasi" },
+        ans: "C",
+        pembahasan: "Poster memiliki ciri menggunakan kalimat yang singkat, jelas, mudah dipahami, serta dilengkapi gambar atau ilustrasi yang menarik dan warna mencolok."
+      }
+    ];
+
+    let currentIndex = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    let studentData = { nama: "", absen: "", kelas: "", esai: "" };
+
+    // Fungsi validasi form & memulai kuis
+    function startQuiz() {
+      const inputNama = document.getElementById('inputNama').value.trim();
+      const inputAbsen = document.getElementById('inputAbsen').value.trim();
+      const inputKelas = document.getElementById('inputKelas').value.trim();
+
+      // Peringatan jika ada yang kosong
+      if(!inputNama || !inputAbsen || !inputKelas) {
+        alert("Mohon isi Nama Lengkap, Nomor Absen, dan Kelas terlebih dahulu!");
+        return;
+      }
+
+      // Simpan data siswa
+      studentData.nama = inputNama;
+      studentData.absen = inputAbsen;
+      studentData.kelas = inputKelas;
+
+      document.getElementById('start-screen').classList.remove('active');
+      document.getElementById('quiz-screen').classList.add('active');
+      loadQuestion();
+    }
+
+    // Fungsi memuat soal
+    function loadQuestion() {
+      const qData = questions[currentIndex];
+      
+      // Update header dan progress bar
+      document.getElementById('questionCount').innerText = `Soal ${currentIndex + 1} dari ${questions.length}`;
+      const progress = ((currentIndex + 1) / questions.length) * 100;
+      document.getElementById('progressFill').style.width = `${progress}%`;
+
+      // Render Soal
+      document.getElementById('questionContainer').innerHTML = qData.q;
+
+      // Render Pilihan Jawaban
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+      
+      for (const [key, value] of Object.entries(qData.options)) {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        if (userAnswers[currentIndex] === key) {
+          btn.classList.add('selected');
+        }
+        btn.innerHTML = `<b>${key}.</b> ${value}`;
+        btn.onclick = () => selectOption(key);
+        optionsContainer.appendChild(btn);
+      }
+
+      // Atur Tombol Navigasi
+      document.getElementById('btnPrev').style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+      
+      const btnNext = document.getElementById('btnNext');
+      if (currentIndex === questions.length - 1) {
+        btnNext.innerText = 'Lanjut ke Soal Uraian';
+        btnNext.classList.remove('btn-outline');
+      } else {
+        btnNext.innerText = 'Selanjutnya';
+        btnNext.classList.add('btn-outline');
+        btnNext.style.color = "white";
+        btnNext.style.backgroundColor = "var(--primary)";
+      }
+    }
+
+    // Fungsi memilih jawaban
+    function selectOption(key) {
+      userAnswers[currentIndex] = key;
+      loadQuestion();
+    }
+
+    // Fungsi tombol sebelumnya
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        loadQuestion();
+      }
+    }
+
+    // Fungsi tombol selanjutnya / lanjut ke esai
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        loadQuestion();
+      } else {
+        const unanswered = userAnswers.filter(ans => ans === null).length;
+        if (unanswered > 0) {
+          const confirmNext = confirm(`Anda belum menjawab ${unanswered} soal pilihan ganda. Yakin ingin lanjut ke soal uraian?`);
+          if (!confirmNext) return;
+        }
+        document.getElementById('quiz-screen').classList.remove('active');
+        document.getElementById('essay-screen').classList.add('active');
+      }
+    }
+
+    // Fungsi kembali dari layar esai ke soal terakhir
+    function backToLastQuestion() {
+      document.getElementById('essay-screen').classList.remove('active');
+      document.getElementById('quiz-screen').classList.add('active');
+      currentIndex = questions.length - 1;
+      loadQuestion();
+    }
+
+    // Fungsi update penghitung karakter esai
+    function updateCharCounter() {
+      const val = document.getElementById('inputEsai').value;
+      document.getElementById('charCounter').innerText = `${val.length} karakter`;
+    }
+
+    // Fungsi menghitung dan menampilkan skor
+    function submitQuiz() {
+      const esaiVal = document.getElementById('inputEsai').value.trim();
+      if (!esaiVal) {
+        const confirmEmpty = confirm("Jawaban uraian masih kosong. Yakin ingin mengirim tanpa mengisi soal uraian?");
+        if (!confirmEmpty) return;
+      }
+      studentData.esai = esaiVal;
+
+      let score = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (userAnswers[i] === questions[i].ans) {
+          score++;
+        }
+      }
+
+      const finalScore = Math.round((score / questions.length) * 100);
+
+      // Tampilkan identitas di halaman hasil
+      document.getElementById('resNama').innerText = studentData.nama;
+      document.getElementById('resAbsen').innerText = studentData.absen;
+      document.getElementById('resKelas').innerText = studentData.kelas;
+
+      document.getElementById('essay-screen').classList.remove('active');
+      document.getElementById('result-screen').classList.add('active');
+      
+      // Animasi Skor
+      let counter = 0;
+      const scoreElement = document.getElementById('finalScore');
+      const interval = setInterval(() => {
+        if (counter >= finalScore) {
+          clearInterval(interval);
+          scoreElement.innerText = finalScore;
+        } else {
+          counter++;
+          scoreElement.innerText = counter;
+        }
+      }, 15);
+
+      // Feedback Text
+      const feedback = document.getElementById('feedbackText');
+      if (finalScore >= 80) {
+        feedback.innerText = "Luar Biasa! Anda sangat memahami materi ini.";
+        feedback.style.color = "var(--success)";
+      } else if (finalScore >= 60) {
+        feedback.innerText = "Bagus! Terus tingkatkan pemahaman Anda.";
+        feedback.style.color = "var(--primary)";
+      } else {
+        feedback.innerText = "Jangan menyerah! Pelajari lagi materi Teks Argumentasi.";
+        feedback.style.color = "var(--danger)";
+      }
+
+      // Kirim nilai otomatis ke Google Sheets
+      kirimNilaiKeGoogleSheets(finalScore, score);
+    }
+
+    // Fungsi mengirim nilai ke Google Sheets via Google Apps Script
+    function kirimNilaiKeGoogleSheets(finalScore, jumlahBenar) {
+      const statusEl = document.getElementById('sendStatus');
+
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("GANTI_DENGAN_URL")) {
+        statusEl.innerText = "⚠️ URL Google Sheets belum diatur (lihat panduan setup).";
+        return;
+      }
+
+      statusEl.innerText = "Mengirim nilai ke Google Sheets...";
+
+      const payload = {
+        nama: studentData.nama,
+        absen: studentData.absen,
+        kelas: studentData.kelas,
+        skor: finalScore,
+        benar: jumlahBenar,
+        totalSoal: questions.length,
+        esai: studentData.esai,
+        waktu: new Date().toLocaleString('id-ID')
+      };
+
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Wajib no-cors karena keterbatasan CORS Google Apps Script
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        // mode no-cors tidak mengizinkan membaca response,
+        // jadi kita anggap berhasil jika tidak ada error jaringan.
+        statusEl.innerText = "✅ Nilai berhasil dikirim ke Google Sheets.";
+        statusEl.style.color = "var(--success)";
+      })
+      .catch((err) => {
+        console.error("Gagal mengirim nilai:", err);
+        statusEl.innerText = "❌ Gagal mengirim nilai. Periksa koneksi internet Anda.";
+        statusEl.style.color = "var(--danger)";
+      });
+    }
+  </script>
+</body>
+</html>
